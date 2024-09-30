@@ -1,0 +1,7 @@
+{
+	"name": "appname",
+	"main": "index.js",
+	"dependencies": {
+		"systeminformation": "^5.23.5"
+	}
+}
