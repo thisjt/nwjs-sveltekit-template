@@ -5,6 +5,8 @@
 	"scripts": {
 		"dev": "vite dev",
 		"build": "vite build",
+		"build:static": "set NWJS_BUILD_STATIC=1 && vite build",
+		"build:api": "set NWJS_BUILD_API=1 && vite build",
 		"preview": "vite preview",
 		"nw": "nw src/nw",
 		"check": "svelte-kit sync && svelte-check --tsconfig ./jsconfig.json",
