@@ -1,7 +1,8 @@
 const si = require('systeminformation');
 
+/** @returns {Promise<string>} */
 const getSystemInformation = async () => {
-	return await si.get({ system: '*' });
+	return JSON.stringify(await si.get({ system: '*' }));
 };
 
 module.exports = {
