@@ -30,6 +30,7 @@
 		"nw-builder": "^4.11.0",
 		"prettier": "^3.1.1",
 		"prettier-plugin-svelte": "^3.1.2",
+		"rollup": "^4.22.5",
 		"svelte": "^4.2.7",
 		"svelte-check": "^4.0.0",
 		"systeminformation": "^5.23.5",
