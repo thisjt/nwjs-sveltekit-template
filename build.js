@@ -2,6 +2,7 @@ import 'dotenv/config';
 import { build } from 'vite';
 import * as fs from 'node:fs/promises';
 import { replaceInFileSync } from 'replace-in-file';
+import nwbuild from 'nw-builder';
 
 const args = process.argv;
 args.shift();
@@ -34,6 +35,37 @@ const commands = {
 			replace: 'index.html',
 			files: './build/index.js'
 		});
+	},
+	nw: async function () {
+		console.log('Building nwjs binary (will take awhile if no cache is available)');
+		/**@type {import('./src/nw/package.json')} */
+		const packagejson = JSON.parse(await fs.readFile('./build/package.json'));
+		console.log(packagejson);
+		await nwbuild({
+			logLevel: 'info',
+			mode: 'build',
+			platform: 'win',
+			arch: 'x64',
+			outDir: 'dist',
+			srcDir: 'build',
+			glob: false,
+			version: 'stable',
+			flavor: 'normal', // or 'sdk' for debug purposes
+			cache: true,
+			name: packagejson.name,
+			app: {
+				// This object defines additional properties used for building for a specific platform.
+				// See https://github.com/nwutils/nw-builder#app-configuration-object
+			},
+			managedManifest: {
+				...packagejson,
+				...{
+					// you may add new fields for your nwjs package.json here as you see fit
+					// See https://github.com/nwutils/nw-builder#build-mode
+				}
+			}
+		});
+		console.log('NWJS Binary build done!');
 	}
 };
 
