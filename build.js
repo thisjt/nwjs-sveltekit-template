@@ -70,6 +70,16 @@ const commands = {
 		});
 	},
 	nw: async function () {
+		let sslCrt = '';
+		if (process.env.SSLCRT) {
+			sslCrt = atob(process.env.SSLCRT || '').replaceAll('\r', '');
+		} else {
+			if (!fsSync.existsSync('./ssl.crt')) {
+				await generateSSL();
+			}
+			sslCrt = fsSync.readFileSync('./ssl.crt', { encoding: 'utf-8' }).replaceAll('\r', '');
+		}
+
 		console.log('Building nwjs binary (will take awhile if no cache is available)');
 		/**@type {import('./src/nw/package.json')} */
 		const localPackageJson = JSON.parse(
@@ -99,6 +109,7 @@ const commands = {
 			// @ts-ignore: https://github.com/nwutils/nw-builder/issues/1248
 			managedManifest: {
 				...localPackageJson,
+				additional_trust_anchors: [sslCrt],
 				...{
 					// you may add new fields for your nwjs package.json here as you see fit
 					// See https://github.com/nwutils/nw-builder#build-mode
@@ -170,10 +181,9 @@ const commands = {
 			replace: `const port = env('PORT', !path && '${API_PORT}');`,
 			files: './predist/*'
 		});
+		fsSync.appendFileSync('./predist/package.json', JSON.stringify({ type: 'commonjs' }));
 
-		console.log(
-			' - You can test the API server by going in this folder and doing "node serve.js".'
-		);
+		console.log(' - You can test the API server by going in "predist" and doing "node serve.js".');
 	},
 	obfuscate: async function () {
 		const ENVARS = [
