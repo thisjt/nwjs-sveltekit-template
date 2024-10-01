@@ -38,7 +38,7 @@ const defaultNodeJsExternalLibs = [
 /**@type {import('./package.json')} */
 const globalPackageJson = JSON.parse(fsSync.readFileSync('./package.json', { encoding: 'utf-8' }));
 
-const API_PORT = 3099;
+const API_PORT = process.env.API_PORT || 3099;
 
 const opensslDownloadUrl = 'https://download.firedaemon.com/FireDaemon-OpenSSL/openssl-3.0.14.zip';
 const opensslBinaryPath = './openssl-3.0/x64/bin/openssl.exe';
@@ -62,7 +62,7 @@ const commands = {
 			files: './build/index.js'
 		});
 
-		console.log('Grabbing all api fetch commands and prepending localhost');
+		console.log('Grabbing all api fetch commands without a domain and prepending localhost');
 		TextReplace({
 			find: 'fetch\\("/',
 			replace: `fetch("https://localhost:${API_PORT}/`,
@@ -106,13 +106,13 @@ const commands = {
 				productName: localPackageJson.name,
 				productVersion: globalPackageJson.version
 			},
-			// @ts-ignore: https://github.com/nwutils/nw-builder/issues/1248
+			// @ts-ignore: waiting for nwutils/nw-builder/issues/1248 to get resolved
 			managedManifest: {
 				...localPackageJson,
 				additional_trust_anchors: [sslCrt],
 				...{
 					// you may add new fields for your nwjs package.json here as you see fit
-					// See https://github.com/nwutils/nw-builder#build-mode
+					// See nwutils/nw-builder#build-mode
 				}
 			}
 		});
@@ -133,6 +133,7 @@ const commands = {
 			replace: 'server.init({',
 			files: './build/handler.js'
 		});
+
 		if (fsSync.existsSync('./predist')) {
 			console.log('Cleaning up predist folder');
 			fsSync.rmSync('./predist', { recursive: true, force: true });
