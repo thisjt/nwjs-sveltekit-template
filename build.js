@@ -19,13 +19,6 @@ const commands = {
 		delete process.env.NWJS_BUILD_STATIC;
 		console.log('Static vite build success!');
 	},
-	api: async function () {
-		console.log('Running api vite build');
-		process.env.NWJS_BUILD_API = '1';
-		await build();
-		delete process.env.NWJS_BUILD_API;
-		console.log('API vite build success!');
-	},
 	prebuild: async function () {
 		console.log('Copying files from src/nw to build folder');
 		await fs.cp('./src/nw', './build', { recursive: true });
@@ -66,6 +59,13 @@ const commands = {
 			}
 		});
 		console.log('NWJS Binary build done!');
+	},
+	api: async function () {
+		console.log('Running api vite build');
+		process.env.NWJS_BUILD_API = '1';
+		await build();
+		delete process.env.NWJS_BUILD_API;
+		console.log('API vite build success!');
 	}
 };
 
