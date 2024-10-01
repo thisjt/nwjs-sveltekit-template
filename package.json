@@ -2,6 +2,18 @@
 	"name": "create-nwjs-sveltekit",
 	"version": "0.0.1",
 	"description": "Template for building desktop applications using SvelteKit and NWJS, includes a backend API SvelteKit Endpoint using @yao-pkg.",
+	"keywords": [
+		"nodejs",
+		"nwjs",
+		"svelte",
+		"sveltekit",
+		"desktop"
+	],
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/thisjt/nwjs-sveltekit-template"
+	},
+	"license": "MIT",
 	"private": false,
 	"scripts": {
 		"dev": "vite dev",
