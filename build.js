@@ -9,6 +9,9 @@ import commonjs from '@rollup/plugin-commonjs';
 import json from '@rollup/plugin-json';
 import resolve from '@rollup/plugin-node-resolve';
 import pkg from '@yao-pkg/pkg';
+import https from 'https';
+import unzipper from 'unzipper';
+import { exec } from 'child_process';
 
 const args = process.argv;
 args.shift();
@@ -35,7 +38,10 @@ const defaultNodeJsExternalLibs = [
 /**@type {import('./package.json')} */
 const globalPackageJson = JSON.parse(fsSync.readFileSync('./package.json', { encoding: 'utf-8' }));
 
-export const API_PORT = 3099;
+const API_PORT = 3099;
+
+const opensslDownloadUrl = 'https://download.firedaemon.com/FireDaemon-OpenSSL/openssl-3.0.14.zip';
+const opensslBinaryPath = './openssl-3.0/x64/bin/openssl.exe';
 
 const commands = {
 	static: async function () {
@@ -255,7 +261,47 @@ const commands = {
 // @ts-ignore: example in microsoft/TypeScript/pull/57847 does not work
 commands[command]();
 
-async function generateSSL() {}
+async function generateSSL() {
+	const opensslZipPath = `./${opensslDownloadUrl.split('/').pop()}`;
+
+	if (!fsSync.existsSync(opensslZipPath)) {
+		await new Promise((resolve, reject) => {
+			const file = fsSync.createWriteStream(opensslZipPath);
+			https
+				.get(opensslDownloadUrl, (response) => {
+					response.pipe(file);
+					file.on('finish', () => {
+						file.close(resolve);
+					});
+				})
+				.on('error', (err) => {
+					fsSync.unlink(opensslZipPath, () => {});
+					reject(err);
+				});
+		});
+	}
+
+	if (!fsSync.existsSync('./openssl-3.0')) {
+		await new Promise((resolve, reject) => {
+			fsSync
+				.createReadStream(opensslZipPath)
+				.pipe(unzipper.Extract({ path: './' }))
+				.on('close', resolve)
+				.on('error', reject);
+		});
+	}
+
+	await new Promise((resolve, reject) => {
+		const command = `"${opensslBinaryPath}" req -config openssl.conf -new -sha256 -newkey rsa:2048 -nodes -keyout ssl.key -x509 -days 3650 -out ssl.crt -batch`;
+		exec(command, (error) => {
+			if (error) {
+				reject(error);
+			} else {
+				resolve(null);
+			}
+		});
+	});
+}
 
 /** @param {{find:string, replace:string, files:string}} param */
 function TextReplace({ find, replace, files }) {
