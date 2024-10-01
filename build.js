@@ -32,6 +32,8 @@ const defaultNodeJsExternalLibs = [
 	'querystring'
 ];
 
+const API_PORT = 3099;
+
 const commands = {
 	static: async function () {
 		console.log('Running static vite build');
@@ -125,6 +127,13 @@ const commands = {
 		TextReplace({
 			find: "require('u' + 'rl')",
 			replace: "require('url')",
+			files: './predist/*'
+		});
+
+		console.log(`Changing API port to port ${API_PORT}`);
+		TextReplace({
+			find: "const port = env('PORT', !path && '3000');",
+			replace: `const port = env('PORT', !path && '${API_PORT}');`,
 			files: './predist/*'
 		});
 
