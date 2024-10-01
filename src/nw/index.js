@@ -26,7 +26,14 @@ const { existsSync, mkdirSync, appendFile } = require('fs');
 
 async function runApi() {
 	try {
-		cpSpawn('api.exe', [], { cwd: `./api` });
+		const daemon = cpSpawn('api.exe', [], { cwd: `./api` });
+
+		daemon.stdout.on('data', (data) => logger(data));
+		daemon.stderr.on('data', (data) => logger(data));
+		daemon.on('close', (code) => {
+			logger('daemon closed with code', code);
+			setTimeout(runApi, 5000);
+		});
 	} catch (e) {
 		logger(e);
 	}

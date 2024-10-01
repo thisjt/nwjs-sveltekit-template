@@ -18,7 +18,8 @@ const config = {
 		},
 		alias: {
 			$nw: 'src/nw'
-		}
+		},
+		appDir: 'kit'
 	}
 };
 
