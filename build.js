@@ -7,6 +7,7 @@ import { rollup } from 'rollup';
 import commonjs from '@rollup/plugin-commonjs';
 import json from '@rollup/plugin-json';
 import resolve from '@rollup/plugin-node-resolve';
+import pkg from '@yao-pkg/pkg';
 
 const args = process.argv;
 args.shift();
@@ -87,6 +88,7 @@ const commands = {
 		console.log('API vite build success!');
 	},
 	esmtocjs: async function () {
+		// Top-Level-Await is not supported in CJS
 		console.log('Removing Top-Level-Await on build/handler.js');
 		TextReplace({
 			find: 'await server.init({',
@@ -110,13 +112,33 @@ const commands = {
 			format: 'cjs'
 		});
 		console.log('Transpilation done!');
+
+		// This is still a mystery to me. If you have ideas, please answer why rollup is doing this on purpose:
+		// https://stackoverflow.com/questions/78453487/why-is-rollup-using-importurl-instead-of-just-putting-importurl-i
+		console.log("Replacing \"require('u' + 'rl')\" to \"require('url')\"");
+		TextReplace({
+			find: "require('u' + 'rl')",
+			replace: "require('url')",
+			files: './predist/*'
+		});
+
 		console.log('Renaming predist/index.js to index.cjs');
 		await fs.rename('./predist/index.js', './predist/index.cjs');
 		console.log(
 			' - You can test the API server by going in this folder and doing "node index.cjs".'
 		);
 	},
-	cjstoexe: async function () {}
+	cjstoexe: async function () {
+		console.log('Packaging predist/index.cjs to dist/package.nw/api/api.exe');
+		await pkg.exec([
+			'--output',
+			'./dist/package.nw/api/api.exe',
+			'--targets',
+			'node20-win-x64',
+			'./predist/index.cjs'
+		]);
+		console.log('Done packaging predist/index.cjs to dist/package.nw/api/api.exe');
+	}
 };
 
 commands[command]();
