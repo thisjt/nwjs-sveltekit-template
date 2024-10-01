@@ -115,7 +115,8 @@ const commands = {
 		console.log(
 			' - You can test the API server by going in this folder and doing "node index.cjs".'
 		);
-	}
+	},
+	cjstoexe: async function () {}
 };
 
 commands[command]();
@@ -123,4 +124,125 @@ commands[command]();
 /** @param {{find:string, replace:string, files:string}} param */
 function TextReplace({ find, replace, files }) {
 	replaceInFileSync({ files, from: find, to: replace });
+}
+
+/**
+ * String Obfuscator to protect strings in compiled (bin) source code
+ * https://jsfiddle.net/pg07yf87/2/
+ * https://stackoverflow.com/questions/14458819/simplest-way-to-obfuscate-and-deobfuscate-a-string-in-javascript
+ * @param {string} inputstr
+ * @returns {string}
+ */
+function stringObfuscator(inputstr) {
+	let mystr = [];
+	let fal = '(![]+[])';
+	let tru = '(!![]+[])';
+	let und = '([]+[]+[][[]])';
+	let obj = '(typeof [])';
+	let numb = '(typeof +[])';
+	let stri = '(typeof ([]+[]))';
+	let bool = '(typeof ![])';
+	let arr = '(([]).constructor.name)';
+	let reg = '(RegExp().constructor.name)';
+	let idk = '([]+[]+([]).constructor)';
+	let num = [];
+	num[0] = '(+[])';
+	num[1] = '(+!+[])';
+	num[2] = '((+!+[])+(+!+[]))';
+	num[3] = '(+!+[]+((+!+[])+(+!+[])))';
+	num[10] = '(+[+!+[]+[+[]]])';
+	num[100] = '(+[+!+[]+[+[]+[+[]]]])';
+
+	inputstr
+		.toString()
+		.split('')
+		.forEach((l, k) => {
+			switch (l) {
+				case 'a':
+					mystr[k] = `${fal}[${num[1]}]`;
+					break;
+				case 'b':
+					mystr[k] = `${obj}[${num[1]}]`;
+					break;
+				case 'c':
+					mystr[k] = `${obj}[${num[2]}*${num[2]}]`;
+					break;
+				case 'd':
+					mystr[k] = `${und}[${num[2]}]`;
+					break;
+				case 'e':
+					mystr[k] = `${und}[${num[3]}]`;
+					break;
+				case 'f':
+					mystr[k] = `${fal}[${num[0]}]`;
+					break;
+				case 'g':
+					mystr[k] = `${stri}[${num[10]}/${num[2]}]`;
+					break;
+				case 'h':
+					mystr[k] = "'h'";
+					break;
+				case 'i':
+					mystr[k] = `${und}[${num[10]}/${num[2]}]`;
+					break;
+				case 'j':
+					mystr[k] = `${obj}[${num[2]}]`;
+					break;
+				case 'k':
+					mystr[k] = "'k'";
+					break;
+				case 'l':
+					mystr[k] = `${fal}[${num[2]}]`;
+					break;
+				case 'm':
+					mystr[k] = `${numb}[${num[2]}]`;
+					break;
+				case 'n':
+					mystr[k] = `${und}[${num[1]}]`;
+					break;
+				case 'o':
+					mystr[k] = `${bool}[${num[1]}]`;
+					break;
+				case 'p':
+					mystr[k] = `${reg}[${num[2]}+${num[3]}]`;
+					break;
+				case 'q':
+					mystr[k] = "'q'";
+					break;
+				case 'r':
+					mystr[k] = `${tru}[${num[1]}]`;
+					break;
+				case 's':
+					mystr[k] = `${fal}[${num[3]}]`;
+					break;
+				case 't':
+					mystr[k] = `${tru}[${num[0]}]`;
+					break;
+				case 'u':
+					mystr[k] = `${tru}[${num[2]}]`;
+					break;
+				case 'v':
+					mystr[k] = `${idk}[${num[100]}/${num[2]}/${num[2]}-${num[1]}]`;
+					break;
+				case 'w':
+					mystr[k] = "'w'";
+					break;
+				case 'x':
+					mystr[k] = `${reg}[${num[3]}+${num[1]}]`;
+					break;
+				case 'y':
+					mystr[k] = `${arr}[${num[1]}+${num[3]}]`;
+					break;
+				case 'z':
+					mystr[k] = "'z'";
+					break;
+				case '\n':
+					mystr[k] = '#';
+					break;
+				default:
+					mystr[k] = `\`${l}\``;
+			}
+		});
+	let endstring = mystr.join('+');
+	return endstring.replaceAll('#', "''");
 }
