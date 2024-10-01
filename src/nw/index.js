@@ -13,7 +13,6 @@ nw.Window.open('http://localhost:5173', {}, (winMain) => {
 		// You may change this as you see fit on how you want to inject NWJS functions.
 		// Keep in mind that the NWJS context is CommonJS syntax. ESM code will not
 		// work here.
-		// @ts-ignore
 		winMain.window.nwjs = {
 			getSystemInformation: systeminfo.getSystemInformation
 		};

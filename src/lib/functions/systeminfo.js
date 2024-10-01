@@ -1,8 +1,8 @@
 import { browser } from '$app/environment';
 
-// Gotcha 1: You need to use let, as we need to override it with the nwjs function
-//           you made in "nw/functions". Functions are not allowed, we don't want
-//           it to be hoisted as we need to overwrite the function
+// Gotcha: You need to use let, as we need to override it with the nwjs function
+//         you made in "nw/functions". Functions are not allowed, we don't want
+//         it to be hoisted as we need to overwrite the function
 
 /**@type {Window['nwjs']['getSystemInformation']} */
 let getSystemInformation = () => {
