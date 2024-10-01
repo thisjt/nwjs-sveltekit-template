@@ -67,7 +67,9 @@ const getSystemInformation = async () => {
 module.exports = {
 	getSystemInformation
 };
+```
 
+```js
 // src/nw/index.js
 const systeminfo = require('./functions/systeminfo');
 
