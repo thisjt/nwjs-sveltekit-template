@@ -121,8 +121,15 @@ const commands = {
 			fsSync.rmSync('./predist', { recursive: true, force: true });
 		}
 
-		console.log('Copying serve js');
-		await fs.copyFile('./src/serve.js', './build');
+		console.log('Copying serve.js to build folder');
+		fsSync.copyFileSync('./src/serve.js', './build/serve.js');
+
+		console.log('Integrating API Port to serve.js');
+		TextReplace({
+			find: "import { API_PORT } from '../build.js';",
+			replace: `const API_PORT = ${API_PORT};`,
+			files: './build/serve.js'
+		});
 
 		console.log('Transpiling API code to CJS');
 		const bundle = await rollup({
@@ -158,10 +165,10 @@ const commands = {
 			files: './predist/*'
 		});
 
-		console.log('Renaming predist/index.js to index.cjs');
-		await fs.rename('./predist/index.js', './predist/index.cjs');
+		console.log('Renaming predist/serve.js to serve.cjs');
+		await fs.rename('./predist/serve.js', './predist/serve.cjs');
 		console.log(
-			' - You can test the API server by going in this folder and doing "node index.cjs".'
+			' - You can test the API server by going in this folder and doing "node serve.cjs".'
 		);
 	},
 	obfuscate: async function () {
@@ -174,11 +181,42 @@ const commands = {
 		ENVARS.forEach((envVar) => {
 			if (!process.env[envVar]) return;
 			console.log(` - ${envVar}`);
+			const obfuscated = stringObfuscator(process.env[envVar] || '##error##');
 			TextReplace({
 				find: `"${process.env[envVar]}"`,
-				replace: stringObfuscator(process.env[envVar] || '##error##'),
+				replace: obfuscated,
 				files: './predist/**/*'
 			});
+			TextReplace({
+				find: `process.env.${envVar}`,
+				replace: obfuscated,
+				files: './predist/**/*'
+			});
+		});
+	},
+	ssl: async function () {
+		if (process.env.SSLKEY && process.env.SSLCRT) {
+			console.log('No SSL key cert pair found, assuming obfuscate already did it for us');
+			return;
+		}
+
+		if (!fsSync.existsSync('./ssl.key') || !fsSync.existsSync('./ssl.crt')) {
+			await generateSSL();
+		}
+
+		console.log('Injecting SSL key and cert in serve.js');
+		const sslKey = stringObfuscator(fsSync.readFileSync('./ssl.key', { encoding: 'utf-8' }));
+		const sslCrt = stringObfuscator(fsSync.readFileSync('./ssl.crt', { encoding: 'utf-8' }));
+
+		TextReplace({
+			find: "'###sslkeyplaceholder###'",
+			replace: sslKey,
+			files: './predist/serve.js'
+		});
+		TextReplace({
+			find: "'###sslcrtplaceholder###'",
+			replace: sslCrt,
+			files: './predist/serve.js'
 		});
 	},
 	cjstoexe: async function () {
@@ -188,7 +226,7 @@ const commands = {
 			'./dist/package.nw/api/api.exe',
 			'--targets',
 			'node20-win-x64',
-			'./predist/index.cjs'
+			'./predist/serve.cjs'
 		]);
 		console.log('Done packaging predist/index.cjs to dist/package.nw/api/api.exe');
 	},
@@ -201,6 +239,7 @@ const commands = {
 		await commands.api();
 		await commands.esmtocjs();
 		await commands.obfuscate();
+		await commands.ssl();
 		await commands.cjstoexe();
 		const timeEnd = new Date();
 		console.log(
@@ -215,6 +254,8 @@ const commands = {
 
 // @ts-ignore: example in microsoft/TypeScript/pull/57847 does not work
 commands[command]();
+
+async function generateSSL() {}
 
 /** @param {{find:string, replace:string, files:string}} param */
 function TextReplace({ find, replace, files }) {

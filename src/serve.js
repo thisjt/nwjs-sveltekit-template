@@ -1,12 +1,13 @@
-import fs from 'fs';
 import https from 'https';
-import 'dotenv/config';
+
 // @ts-ignore: template for building the API
 import { handler } from './handler.js';
+
+// Don't change this line, this gets replaced by the API port specified in "build.js"
 import { API_PORT } from '../build.js';
 
-const sslKey = process.env.SSLKEY || atob(fs.readFileSync('../ssl.key', { encoding: 'utf-8' }));
-const sslCrt = process.env.SSLCRT || atob(fs.readFileSync('../ssl.crt', { encoding: 'utf-8' }));
+const sslKey = atob(process.env.SSLKEY || '') || atob('###sslkeyplaceholder###');
+const sslCrt = atob(process.env.SSLCRT || '') || atob('###sslcrtplaceholder###');
 
 const httpsServer = https.createServer(
 	{
@@ -21,3 +22,6 @@ const httpsServer = https.createServer(
 httpsServer.listen(API_PORT, () => {
 	console.log('Listening on port', API_PORT);
 });
+
+function main() {}
+main();
