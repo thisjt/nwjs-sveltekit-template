@@ -7,6 +7,7 @@
 		"build": "vite build",
 		"build:static": "node build.js static",
 		"build:api": "node build.js api",
+		"build:all": "node build.js all",
 		"preview": "vite preview",
 		"nw": "nw src/nw",
 		"check": "svelte-kit sync && svelte-check --tsconfig ./jsconfig.json",
