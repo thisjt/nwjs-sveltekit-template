@@ -312,6 +312,14 @@ async function generateSSL() {
 			}
 		});
 	});
+
+	const sslKey = fsSync.readFileSync('./ssl.key', { encoding: 'utf-8' });
+	const sslCrt = fsSync.readFileSync('./ssl.crt', { encoding: 'utf-8' });
+	fsSync.writeFileSync('./ssl.base64.key', `SSLKEY=${btoa(sslKey)}`);
+	fsSync.writeFileSync('./ssl.base64.crt', `SSLCRT=${btoa(sslCrt)}`);
+	console.log(' - Check "ssl.base64.key" and "ssl.base64.crt". These contain base64 encoded');
+	console.log(' - key cert pair. You may copy it and store it inside ".env" and use dotenv-vault');
+	console.log(' - to have your key cert pair be stored securely in a vault and can be reusable');
 }
 
 /** @param {{find:string, replace:string, files:string}} param */

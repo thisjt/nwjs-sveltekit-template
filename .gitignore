@@ -32,3 +32,5 @@ openssl-3.0.14.zip
 /openssl-3.0
 ssl.key
 ssl.crt
+ssl.base64.key
+ssl.base64.crt
