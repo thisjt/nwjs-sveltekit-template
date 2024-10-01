@@ -144,7 +144,7 @@ const commands = {
 
 		console.log('Integrating API Port to serve.js');
 		TextReplace({
-			find: "import { API_PORT } from '../build.js';",
+			find: 'const API_PORT = 3099;',
 			replace: `const API_PORT = ${API_PORT};`,
 			files: './build/serve.js'
 		});

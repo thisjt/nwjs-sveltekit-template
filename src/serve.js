@@ -3,8 +3,9 @@ import https from 'https';
 // @ts-ignore: template for building the API
 import { handler } from './handler.js';
 
-// Don't change this line, this gets replaced by the API port specified in "build.js"
-import { API_PORT } from '../build.js';
+// Don't change this line, this will get replaced by the API port specified
+// in process.env.API_PORT during build. Default port is 3099.
+const API_PORT = 3099;
 
 const sslKey = atob(process.env.SSLKEY || '') || atob('###sslkeyplaceholder###');
 const sslCrt = atob(process.env.SSLCRT || '') || atob('###sslcrtplaceholder###');
