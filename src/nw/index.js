@@ -36,7 +36,7 @@ if (existsSync('./api/api.exe')) {
 	runApi();
 }
 
-if (existsSync('./../logs')) mkdirSync('./../logs');
+if (!existsSync('./../logs')) mkdirSync('./../logs');
 const logFilename = `applogs-${new Date().toLocaleDateString().replaceAll('/', '-')}.log`;
 /**@param {*[]} data */
 function logger(...data) {
