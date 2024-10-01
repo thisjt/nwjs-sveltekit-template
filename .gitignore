@@ -30,3 +30,5 @@ vite.config.ts.timestamp-*
 
 openssl-3.0.14.zip
 /openssl-3.0
+ssl.key
+ssl.crt

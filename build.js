@@ -217,12 +217,12 @@ const commands = {
 		TextReplace({
 			find: "'###sslkeyplaceholder###'",
 			replace: sslKey,
-			files: './predist/serve.js'
+			files: './predist/serve.cjs'
 		});
 		TextReplace({
 			find: "'###sslcrtplaceholder###'",
 			replace: sslCrt,
-			files: './predist/serve.js'
+			files: './predist/serve.cjs'
 		});
 	},
 	cjstoexe: async function () {
@@ -265,6 +265,7 @@ async function generateSSL() {
 	const opensslZipPath = `./${opensslDownloadUrl.split('/').pop()}`;
 
 	if (!fsSync.existsSync(opensslZipPath)) {
+		console.log('Downloading OpenSSL Binary');
 		await new Promise((resolve, reject) => {
 			const file = fsSync.createWriteStream(opensslZipPath);
 			https
@@ -282,6 +283,7 @@ async function generateSSL() {
 	}
 
 	if (!fsSync.existsSync('./openssl-3.0')) {
+		console.log('Extracting OpenSSL Binary');
 		await new Promise((resolve, reject) => {
 			fsSync
 				.createReadStream(opensslZipPath)
@@ -291,6 +293,7 @@ async function generateSSL() {
 		});
 	}
 
+	console.log('Generating ssl key pair (ssl.key, ssl.crt)');
 	await new Promise((resolve, reject) => {
 		const command = `"${opensslBinaryPath}" req -config openssl.conf -new -sha256 -newkey rsa:2048 -nodes -keyout ssl.key -x509 -days 3650 -out ssl.crt -batch`;
 		exec(command, (error) => {
