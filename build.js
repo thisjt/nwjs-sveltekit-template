@@ -128,6 +128,23 @@ const commands = {
 			' - You can test the API server by going in this folder and doing "node index.cjs".'
 		);
 	},
+	obfuscate: async function () {
+		const ENVARS = [
+			// Add the secret keys you want to be obfuscated here
+			'PRIVATE_STRING'
+		];
+
+		console.log('Obfuscating private keys');
+		ENVARS.forEach((envVar) => {
+			if (!process.env[envVar]) return;
+			console.log(` - ${envVar}`);
+			TextReplace({
+				find: `"${process.env[envVar]}"`,
+				replace: stringObfuscator(process.env[envVar]),
+				files: './predist/**/*'
+			});
+		});
+	},
 	cjstoexe: async function () {
 		console.log('Packaging predist/index.cjs to dist/package.nw/api/api.exe');
 		await pkg.exec([
