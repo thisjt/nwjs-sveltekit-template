@@ -45,11 +45,19 @@ const commands = {
 	prebuild: async function () {
 		console.log('Copying files from src/nw to build folder');
 		await fs.cp('./src/nw', './build', { recursive: true });
+
 		console.log('Replacing nwjs index.js entry point from localhost to index.html');
 		TextReplace({
 			find: 'http://localhost:5173',
 			replace: 'index.html',
 			files: './build/index.js'
+		});
+
+		console.log('Grabbing all api fetch commands and prepending localhost');
+		TextReplace({
+			find: 'fetch\\("/',
+			replace: `fetch("http://localhost:${API_PORT}/`,
+			files: './build/**/*'
 		});
 	},
 	nw: async function () {
