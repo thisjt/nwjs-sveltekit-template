@@ -95,6 +95,11 @@ const commands = {
 			replace: 'server.init({',
 			files: './build/handler.js'
 		});
+		if (fs.existsSync('./predist')) {
+			console.log('Cleaning up predist folder');
+			fs.rmSync('./predist', { recursive: true, force: true });
+		}
+
 		console.log('Transpiling API code to CJS');
 		const bundle = await rollup({
 			input: './build/index.js',
