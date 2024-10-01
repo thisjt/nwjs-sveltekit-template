@@ -28,8 +28,8 @@ async function runApi() {
 	try {
 		const daemon = cpSpawn('api.exe', [], { cwd: `./api` });
 
-		daemon.stdout.on('data', (data) => logger(data));
-		daemon.stderr.on('data', (data) => logger(data));
+		daemon.stdout.on('data', (data) => logger(data.toString()));
+		daemon.stderr.on('data', (data) => logger(data.toString()));
 		daemon.on('close', (code) => {
 			logger('daemon closed with code', code);
 			setTimeout(runApi, 5000);
