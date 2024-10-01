@@ -1,6 +1,7 @@
 import 'dotenv/config';
 import { build } from 'vite';
 import * as fs from 'node:fs/promises';
+import * as fsSync from 'fs';
 import { replaceInFileSync } from 'replace-in-file';
 import nwbuild from 'nw-builder';
 import { rollup } from 'rollup';
@@ -95,7 +96,7 @@ const commands = {
 			replace: 'server.init({',
 			files: './build/handler.js'
 		});
-		if (fs.existsSync('./predist')) {
+		if (fsSync.existsSync('./predist')) {
 			console.log('Cleaning up predist folder');
 			fs.rmSync('./predist', { recursive: true, force: true });
 		}
