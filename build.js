@@ -98,7 +98,7 @@ const commands = {
 		});
 		if (fsSync.existsSync('./predist')) {
 			console.log('Cleaning up predist folder');
-			fs.rmSync('./predist', { recursive: true, force: true });
+			fsSync.rmSync('./predist', { recursive: true, force: true });
 		}
 
 		console.log('Transpiling API code to CJS');
