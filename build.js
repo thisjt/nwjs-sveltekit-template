@@ -191,6 +191,8 @@ const commands = {
 			'PRIVATE_STRING'
 		];
 
+		if (process.env.SSLKEY) ENVARS.push('SSLKEY');
+		if (process.env.SSLCRT) ENVARS.push('SSLCRT');
 		console.log('Obfuscating private keys');
 		ENVARS.forEach((envVar) => {
 			if (!process.env[envVar]) return;
