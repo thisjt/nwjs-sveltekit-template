@@ -1,7 +1,7 @@
 import fs from 'fs';
 import https from 'https';
 import 'dotenv/config';
-// @ts-ignore: only for building the API purposes
+// @ts-ignore: template for building the API
 import { handler } from './handler.js';
 import { API_PORT } from '../build.js';
 

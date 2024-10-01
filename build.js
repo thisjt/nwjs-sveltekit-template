@@ -121,9 +121,12 @@ const commands = {
 			fsSync.rmSync('./predist', { recursive: true, force: true });
 		}
 
+		console.log('Copying serve js');
+		await fs.copyFile('./src/serve.js', './build');
+
 		console.log('Transpiling API code to CJS');
 		const bundle = await rollup({
-			input: './build/index.js',
+			input: './build/serve.js',
 			external: [
 				...defaultNodeJsExternalLibs,
 				...[
