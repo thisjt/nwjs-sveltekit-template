@@ -180,7 +180,8 @@ const commands = {
 		console.log('Done packaging predist/index.cjs to dist/package.nw/api/api.exe');
 	},
 	all: async function () {
-		console.log('Starting build', new Date().toLocaleString());
+		const timeStart = new Date();
+		console.log('Starting build', timeStart.toLocaleString());
 		await commands.static();
 		await commands.prebuild();
 		await commands.nw();
@@ -188,7 +189,14 @@ const commands = {
 		await commands.esmtocjs();
 		await commands.obfuscate();
 		await commands.cjstoexe();
-		console.log('Build done!', new Date().toLocaleString());
+		const timeEnd = new Date();
+		console.log(
+			'Build done!',
+			timeEnd.toLocaleString(),
+			'Build took',
+			Math.ceil((timeEnd - timeStart) / 1000),
+			'seconds'
+		);
 	}
 };
 
