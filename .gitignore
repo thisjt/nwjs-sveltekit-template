@@ -9,6 +9,9 @@ node_modules
 /dist
 /cache
 
+# During dev, nw will generate logs here
+src/logs
+
 # OS
 .DS_Store
 Thumbs.db

@@ -19,3 +19,30 @@ nw.Window.open('http://localhost:5173', {}, (winMain) => {
 		};
 	});
 });
+
+// Helper functions for running the API and having a debugger
+const cpSpawn = require('child_process').spawn;
+const { existsSync, mkdirSync, appendFile } = require('fs');
+
+async function runApi() {
+	try {
+		cpSpawn('api.exe', [], { cwd: `./api` });
+	} catch (e) {
+		logger(e);
+	}
+}
+
+if (existsSync('./api/api.exe')) {
+	runApi();
+}
+
+if (existsSync('./../logs')) mkdirSync('./../logs');
+const logFilename = `applogs-${new Date().toLocaleDateString().replaceAll('/', '-')}.log`;
+/**@param {*[]} data */
+function logger(...data) {
+	appendFile(
+		`./../logs/${logFilename}`,
+		`${new Date().toLocaleTimeString()}: ${JSON.stringify(data)}\n`,
+		() => {}
+	);
+}
