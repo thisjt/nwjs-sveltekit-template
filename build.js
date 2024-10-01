@@ -171,10 +171,8 @@ const commands = {
 			files: './predist/*'
 		});
 
-		console.log('Renaming predist/serve.js to serve.cjs');
-		await fs.rename('./predist/serve.js', './predist/serve.cjs');
 		console.log(
-			' - You can test the API server by going in this folder and doing "node serve.cjs".'
+			' - You can test the API server by going in this folder and doing "node serve.js".'
 		);
 	},
 	obfuscate: async function () {
@@ -215,14 +213,14 @@ const commands = {
 		const sslCrt = stringObfuscator(fsSync.readFileSync('./ssl.crt', { encoding: 'utf-8' }));
 
 		TextReplace({
-			find: "'###sslkeyplaceholder###'",
+			find: "atob('###sslkeyplaceholder###')",
 			replace: sslKey,
-			files: './predist/serve.cjs'
+			files: './predist/serve.js'
 		});
 		TextReplace({
-			find: "'###sslcrtplaceholder###'",
+			find: "atob('###sslcrtplaceholder###')",
 			replace: sslCrt,
-			files: './predist/serve.cjs'
+			files: './predist/serve.js'
 		});
 	},
 	cjstoexe: async function () {
@@ -232,7 +230,7 @@ const commands = {
 			'./dist/package.nw/api/api.exe',
 			'--targets',
 			'node20-win-x64',
-			'./predist/serve.cjs'
+			'./predist/serve.js'
 		]);
 		console.log('Done packaging predist/index.cjs to dist/package.nw/api/api.exe');
 	},
