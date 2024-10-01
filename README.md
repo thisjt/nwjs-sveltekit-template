@@ -51,7 +51,9 @@ the entire desktop application in the `dist` folder.
 
 ## Things to Keep in Mind
 
-1. Functions created in NWJS context must be accompanied by its corresponding browser context function. For example:
+### Functions created in NWJS context must be accompanied by its corresponding browser context function.
+
+For example:
 
 NWJS Context Function:
 
