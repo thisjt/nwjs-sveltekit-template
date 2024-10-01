@@ -155,6 +155,17 @@ const commands = {
 			'./predist/index.cjs'
 		]);
 		console.log('Done packaging predist/index.cjs to dist/package.nw/api/api.exe');
+	},
+	all: async function () {
+		console.log('Starting build', new Date().toLocaleString());
+		await commands.static();
+		await commands.prebuild();
+		await commands.nw();
+		await commands.api();
+		await commands.esmtocjs();
+		await commands.obfuscate();
+		await commands.cjstoexe();
+		console.log('Build done!', new Date().toLocaleString());
 	}
 };
 
