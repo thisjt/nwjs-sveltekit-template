@@ -1,4 +1,5 @@
 <script>
+	import { dev } from '$app/environment';
 	import { getSystemInformation } from '$lib/functions/systeminfo';
 	import { onMount } from 'svelte';
 	let hello = 'sad';
@@ -22,3 +23,4 @@
 <p>Visit <a href="https://kit.svelte.dev">kit.svelte.dev</a> to read the documentation</p>
 <p>Hello {hello}</p>
 <p>System Info: {systemInfo}</p>
+<p>{dev ? 'You are in dev mode!' : 'You are in prod mode!'}</p>
