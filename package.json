@@ -1,7 +1,7 @@
 {
-	"name": "nwjs-sveltekit-template",
+	"name": "create-nwjs-sveltekit",
 	"version": "0.0.1",
-	"description": "",
+	"description": "Template for building desktop applications using SvelteKit and NWJS, includes a backend API SvelteKit Endpoint using @yao-pkg.",
 	"private": false,
 	"scripts": {
 		"dev": "vite dev",
