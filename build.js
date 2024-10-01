@@ -32,7 +32,10 @@ const defaultNodeJsExternalLibs = [
 	'querystring'
 ];
 
-const API_PORT = 3099;
+/**@type {import('./package.json')} */
+const globalPackageJson = JSON.parse(fsSync.readFileSync('./package.json', { encoding: 'utf-8' }));
+
+export const API_PORT = 3099;
 
 const commands = {
 	static: async function () {
@@ -63,8 +66,10 @@ const commands = {
 	nw: async function () {
 		console.log('Building nwjs binary (will take awhile if no cache is available)');
 		/**@type {import('./src/nw/package.json')} */
-		const packagejson = JSON.parse(await fs.readFile('./build/package.json'));
-		console.log(packagejson);
+		const localPackageJson = JSON.parse(
+			await fs.readFile('./build/package.json', { encoding: 'utf-8' })
+		);
+		console.log(localPackageJson);
 		await nwbuild({
 			logLevel: 'info',
 			mode: 'build',
@@ -76,13 +81,18 @@ const commands = {
 			version: 'stable',
 			flavor: 'normal', // or 'sdk' for debug purposes
 			cache: true,
-			name: packagejson.name,
 			app: {
-				// This object defines additional properties used for building for a specific platform.
-				// See https://github.com/nwutils/nw-builder#app-configuration-object
+				company: `${localPackageJson.name}.exe`,
+				fileDescription: globalPackageJson.description,
+				fileVersion: 'app',
+				internalName: `${localPackageJson.name}.exe`,
+				originalFilename: `${localPackageJson.name}.exe`,
+				productName: localPackageJson.name,
+				productVersion: globalPackageJson.version
 			},
+			// @ts-ignore: https://github.com/nwutils/nw-builder/issues/1248
 			managedManifest: {
-				...packagejson,
+				...localPackageJson,
 				...{
 					// you may add new fields for your nwjs package.json here as you see fit
 					// See https://github.com/nwutils/nw-builder#build-mode
@@ -163,7 +173,7 @@ const commands = {
 			console.log(` - ${envVar}`);
 			TextReplace({
 				find: `"${process.env[envVar]}"`,
-				replace: stringObfuscator(process.env[envVar]),
+				replace: stringObfuscator(process.env[envVar] || '##error##'),
 				files: './predist/**/*'
 			});
 		});
@@ -194,12 +204,13 @@ const commands = {
 			'Build done!',
 			timeEnd.toLocaleString(),
 			'Build took',
-			Math.ceil((timeEnd - timeStart) / 1000),
+			Math.ceil((timeEnd.getTime() - timeStart.getTime()) / 1000),
 			'seconds'
 		);
 	}
 };
 
+// @ts-ignore: example in microsoft/TypeScript/pull/57847 does not work
 commands[command]();
 
 /** @param {{find:string, replace:string, files:string}} param */
@@ -215,6 +226,7 @@ function TextReplace({ find, replace, files }) {
  * @returns {string}
  */
 function stringObfuscator(inputstr) {
+	/**@type {string[]} */
 	let mystr = [];
 	let fal = '(![]+[])';
 	let tru = '(!![]+[])';
