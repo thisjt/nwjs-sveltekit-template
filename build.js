@@ -65,7 +65,7 @@ const commands = {
 		console.log('Grabbing all api fetch commands and prepending localhost');
 		TextReplace({
 			find: 'fetch\\("/',
-			replace: `fetch("http://localhost:${API_PORT}/`,
+			replace: `fetch("https://localhost:${API_PORT}/`,
 			files: './build/**/*'
 		});
 	},
