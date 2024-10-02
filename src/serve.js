@@ -1,7 +1,7 @@
 import https from 'https';
 
-// @ts-ignore: template for building the API
-import { handler } from './handler.js';
+// @ts-ignore: placeholder for handler.js
+import { handler } from './handler';
 
 // Don't change this line, this will get replaced by the API port specified
 // in process.env.API_PORT during build. Default port is 3099.
