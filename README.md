@@ -10,8 +10,12 @@ Download this repo, then do:
 
 After installing, split your command prompt into two and run these commands on each consoles:
 
-Console 1: `pnpm dev`
-Console 2: `pnpm nw`
+| Console 1  | Console 2 |
+| ---------- | --------- |
+| `pnpm dev` | `pnpm nw` |
+
+The reason these are split into two is so that you can terminate `nw` without terminating the vite server. During
+your development of `nw`.
 
 ## Project Structure
 
@@ -51,9 +55,9 @@ the entire desktop application in the `dist` folder.
 
 ## Things to Keep in Mind
 
-### Functions created in NWJS context must be accompanied by its corresponding browser context function.
+### NWJS Context and Browser Context
 
-For example:
+Functions created in NWJS context must be accompanied by its corresponding browser context function. For example:
 
 NWJS Context Function:
 
